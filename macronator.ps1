@@ -21,7 +21,7 @@ $hackmudEnv = "$env:APPDATA\hackmud"
 #creating backup folder
 $backupDir = Join-Path $hackmudEnv "Macro Backups"
 if (-Not (Test-Path $backupDir)) {
-    New-Item -Path $backupDir -ItemType Directory
+    New-Item -Path $backupDir -ItemType Directory | Out-Null
 }
 
 #function to create backups of files before editing them
@@ -46,6 +46,20 @@ function Backup-File {
     }
 }
 
+#function to crate hash for file comparison
+function Get-MacroHash {
+    param ([String]$filePath)
+    try {
+        $hash = Get-FileHash -Path $filePath -Algorithm MD5
+        return $hash.Hash
+    }
+    catch {
+        Write-Host "Error computing hash for file: $filePath"
+        return $null
+    }
+}
+
+
 #main sync loop
 while($true) {
 
@@ -53,26 +67,32 @@ while($true) {
 $macroFiles = Get-ChildItem -Path $hackmudEnv -Filter "*.macros"
 $keyFiles = Get-ChildItem -Path $hackmudEnv -Filter "*.key"
 
-#sort macro macroFiles by first and last edited
+#get hashes for all files
+$allHashes = $macroFiles | ForEach-Object { Get-MacroHash -filePath $_.FullName }
+
+#count and array all unique hashes
+$uniqueHashes = $allHashes | Select-Object -Unique
+
+#sort .macros files by first and last edited
 $firstEdited = $macroFiles | Sort-Object LastWriteTime | Select-Object -first 1
 $lastEdited = $macroFiles | Sort-Object LastWriteTime | Select-Object -last 1
 
-#gets content of las edited file before doing any operations
+#gets content of las edited file before doing any operations, outside of the write logic to prevent operation race cases
 $content = Get-Content $lastEdited.FullName
 
-#only sync if file is not empty
-if ($null -ne $content -and $content -ne "") {
+#only sync if file is not empty, and all files are not equal
+if ($null -ne $content -and $content -ne "" -and $uniqueHashes.count -gt 1) {
 
     #create .macros files for orphaned .key files
     foreach ($keyFile in $keyFiles) {
 
-        #populate var with theoretical .key name and with .macros extension
+        #extrapolate .macros name from .key file
         $expectedMacroFile = [IO.Path]::ChangeExtension($keyFile.FullName, ".macros")
 
         #test if such a file exists
         if (-Not (Test-Path $expectedMacroFile)) {
 
-            #create a macro file copy of the latest macro file if it doesn't
+            #create a macro file copy of the latest macro file if it didn't exist
             Set-Content -Path $expectedMacroFile -Value $content
         }
     }
@@ -80,13 +100,31 @@ if ($null -ne $content -and $content -ne "") {
     #check if all the .macros files have been synced. If they haven't, runs sync job
     if($firstEdited.LastWriteTime -ne $lastEdited.LastWriteTime) {
 
-        #overwrite contents of all macroFiles with the last edited file, excluding original
+        #overwrite contents of all older .macros files with the last edited file, excluding original
         foreach($file in $macroFiles){
             if($file.FullName -ne $lastEdited.FullName){
 
+                try {
                 #create backup first, then sync
                 Backup-File -sourceFilePath $file.FullName
                 Set-Content -Path $file.FullName -Value $content
+                    
+                }
+
+                #error handling if we fail to write (for example we edit a macro at the exact same time as we are syncing)
+                catch {
+                    try {
+                        Start-Sleep -Seconds 1
+                        Backup-File -sourceFilePath $file.FullName
+                        Set-Content -Path $file.FullName -Value $content
+                        return
+                    }
+                    catch {
+                        Write-Host "Error when writing to file: $file"
+                        return
+                    }
+                }
+
             }
         }
     }
