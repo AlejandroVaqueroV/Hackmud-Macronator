@@ -4,6 +4,7 @@ User Macro syncing tool for the game Hackmud
 Tested in Windows only, but feel free to try to run / fork to Linux: https://github.com/PowerShell/PowerShell - There should be no issues other than maybe needing to edit the $hackmudEnv for whatever one is used on Linux
 
 Usage: make sure the last edited macro is the one you want to sync, then run the tool.
+To see changes in game, change user
 
  This tool is written in powershell and compiled using ps2exe
 
