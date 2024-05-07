@@ -1,14 +1,13 @@
 # Hackmud-Macronator
-Repo for the macro syncing tool I quickly made
+User Macro syncing tool for the game Hackmud
+Windows only, this tool is written in powershell and compiled using ps2exe
 
 It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (users with no macros)
 
 Backups: This tool will backup the last 5 versions of each individual file before updating, keeping them under %appdata%\hackmud\Macro Backups
 Backup format is username_ddMMyyyyHHmmss
 
-This tool was written in powershell and compiled using ps2exe
-
-To run, simply execute. By default, it will detect changes every 20 seconds. To edit this, or exit, call the executable from a console with the parameters:
+To run, simply execute. By default, it will detect and sync changes every 20 seconds. To edit this, or exit, call the executable from a console with the parameters:
 - -exit to close all Macronator.exe instances
 - -timerSeconds XX to change the frequency the program will check for file changes
 
