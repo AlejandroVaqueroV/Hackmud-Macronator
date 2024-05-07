@@ -3,10 +3,11 @@ User Macro syncing tool for the game Hackmud
 
 Tested in Windows only, but feel free to try to run / fork to Linux: https://github.com/PowerShell/PowerShell - There should be no issues other than maybe needing to edit the $hackmudEnv for whatever one is used on Linux
 
+Usage: make sure the last edited macro is the one you want to sync, then run the tool.
+
  This tool is written in powershell and compiled using ps2exe
 
 It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (users with no macros)
-Usage: make sure the last edited macro is the one you want to sync, then run the tool.
 
 Backups: This tool will backup the last 5 versions of each individual file before updating, keeping them under %appdata%\hackmud\Macro Backups
 Backup format is username_ddMMyyyyHHmmss
