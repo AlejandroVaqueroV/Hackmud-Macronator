@@ -1,7 +1,7 @@
 # Hackmud-Macronator
 Repo for the macro syncing tool I quickly made
 
-It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (accounts with no macros)
+It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (users with no macros)
 
 This tool was written in powershell and compiled using ps2exe
 
