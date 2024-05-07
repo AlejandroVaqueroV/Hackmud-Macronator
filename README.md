@@ -1,7 +1,7 @@
 # Hackmud-Macronator
 User Macro syncing tool for the game Hackmud
 
-Tested in Windows only, but feel free to try to run / fork to Linux: https://github.com/PowerShell/PowerShell
+Tested in Windows only, but feel free to try to run / fork to Linux: https://github.com/PowerShell/PowerShell - There should be no issues other than maybe needing to edit the $hackmudEnv for whatever one is used on Linux
 
  This tool is written in powershell and compiled using ps2exe
 
