@@ -4,6 +4,7 @@ Repo for the macro syncing tool I quickly made
 It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (users with no macros)
 
 Backups: This tool will backup the last 5 versions of each individual file before updating, keeping them under %appdata%\hackmud\Macro Backups
+Backup format is username_ddMMyyyyHHmmss
 
 This tool was written in powershell and compiled using ps2exe
 
