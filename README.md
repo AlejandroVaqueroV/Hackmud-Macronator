@@ -1,7 +1,9 @@
 # Hackmud-Macronator
 User Macro syncing tool for the game Hackmud
 
-Windows only, this tool is written in powershell and compiled using ps2exe
+Tested in Windows only, but feel free to try to run / fork to Linux: https://github.com/PowerShell/PowerShell
+
+ This tool is written in powershell and compiled using ps2exe
 
 It will sync the latest edited .macros file to all other .macros files, and will create .macros files for orphaned .key files (users with no macros)
 Usage: make sure the last edited macro is the one you want to sync, then run the tool.
